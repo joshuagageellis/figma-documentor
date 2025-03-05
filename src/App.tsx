@@ -76,24 +76,28 @@ const App: React.FC = () => {
     const headers = [
       "ID",
       "Title",
-      "Description",
-      "Figma Frame Reference",
-      "Condensed",
       "High Estimate",
       "Low Estimate",
       "Notes",
       "Notes Content",
+      "Figma Frame Reference",
     ];
 
     const rows = updatedFeatures.map((feature) => [
+      // ID
       feature.id,
+      // Title
       feature.title,
-      feature.images.map((img) => img.embedUrl).join("\r"),
-      `${feature.title}\r${feature.images.map((img) => img.embedUrl).join("\r")}`,
+      // High Estimate
       feature.highEstimate,
+      // Low Estimate
       feature.lowEstimate,
-      feature.notes.map((note) => note.embedUrl).join("\r"),
-      feature.notes.map((note) => note.content).join("\r"),
+      // Notes
+      feature.notes.map((note) => note.embedUrl).join(" "),
+      // Notes Content
+      feature.notes.map((note) => note.content).join(" ").replace(/\n/g, " "),
+      // Figma Frame Reference
+      feature.images.map((img) => img.embedUrl).join(" "),
     ]);
 
     const csvContent = [
@@ -112,7 +116,7 @@ const App: React.FC = () => {
     const url = URL.createObjectURL(blob);
 
     link.setAttribute("href", url);
-    link.setAttribute("download", "features.csv");
+    link.setAttribute("download", `features-${appState.fileKey}.csv`);
     link.style.visibility = "hidden";
 
     document.body.appendChild(link);

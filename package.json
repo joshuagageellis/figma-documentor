@@ -27,10 +27,10 @@
     "eslint-plugin-react-refresh": "^0.4.14",
     "globals": "^15.11.0",
     "plugma": "^1.2.8",
+    "prettier": "^3.5.3",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.11.0",
-    "vite": "^5.4.10",
-    "prettier": "^3.5.3"
+    "vite": "^5.4.10"
   },
   "plugma": {
     "manifest": {
@@ -45,7 +45,8 @@
       ],
       "networkAccess": {
         "allowedDomains": [
-          "none"
+          "https://embed.figma.com",
+          "https://www.figma.com"
         ],
         "devAllowedDomains": [
           "http://localhost:*",
