@@ -54,6 +54,7 @@
         ]
       },
       "enablePrivatePluginApi": true
-    }
+    },
+    "pluginVersion": "1"
   }
 }
