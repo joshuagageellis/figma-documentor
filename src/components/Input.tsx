@@ -1,5 +1,5 @@
-import React from 'react';
-import './Input.css'; // Import the styles
+import React from "react";
+import "./Input.css"; // Import the styles
 
 interface InputProps {
   value?: string;
@@ -8,7 +8,12 @@ interface InputProps {
   onChange?: (value: string) => void;
 }
 
-const Input: React.FC<InputProps> = ({ value = '', type = 'text', showIcon = false, onChange }) => {
+const Input: React.FC<InputProps> = ({
+  value = "",
+  type = "text",
+  showIcon = false,
+  onChange,
+}) => {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (onChange) {
       onChange(event.target.value);

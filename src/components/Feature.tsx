@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import Button from './Button';
-import ReactMarkdown from 'react-markdown';
-import { Collapse } from './Collapse';
-import { AnimatePresence } from 'motion/react';
+import React, { useEffect, useState } from "react";
+import Button from "./Button";
+import ReactMarkdown from "react-markdown";
+import { Collapse } from "./Collapse";
+import { AnimatePresence } from "motion/react";
 
 export const FeatureCard = ({
   feature,
@@ -23,7 +23,7 @@ export const FeatureCard = ({
     }, 3000);
     if (confirmDelete) {
       setFeatures((state: Feature[]) =>
-        state.filter((f) => f.id !== feature.id)
+        state.filter((f) => f.id !== feature.id),
       );
     }
   };
@@ -31,8 +31,8 @@ export const FeatureCard = ({
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFeatures((state) =>
       state.map((f) =>
-        f.id === feature.id ? { ...f, title: e.target.value } : f
-      )
+        f.id === feature.id ? { ...f, title: e.target.value } : f,
+      ),
     );
   };
 
@@ -41,8 +41,8 @@ export const FeatureCard = ({
       state.map((f) =>
         f.id === feature.id
           ? { ...f, highEstimate: parseInt(e.target.value) }
-          : f
-      )
+          : f,
+      ),
     );
   };
 
@@ -51,8 +51,8 @@ export const FeatureCard = ({
       state.map((f) =>
         f.id === feature.id
           ? { ...f, lowEstimate: parseInt(e.target.value) }
-          : f
-      )
+          : f,
+      ),
     );
   };
 
@@ -60,24 +60,24 @@ export const FeatureCard = ({
     window.parent.postMessage(
       {
         pluginMessage: {
-          type: 'FOCUS_NODE',
+          type: "FOCUS_NODE",
           nodeId: nodeId,
         },
       },
-      '*'
+      "*",
     );
   };
 
-  const handleTagNode = (target: 'image' | 'document') => {
+  const handleTagNode = (target: "image" | "document") => {
     window.parent.postMessage(
       {
         pluginMessage: {
-          type: 'GET_NODE_ID',
+          type: "GET_NODE_ID",
           featureId: feature.id,
           target,
         },
       },
-      '*'
+      "*",
     );
   };
 
@@ -86,8 +86,8 @@ export const FeatureCard = ({
       state.map((f) =>
         f.id === feature.id
           ? { ...f, notes: f.notes.filter((n) => n.nodeId !== id) }
-          : f
-      )
+          : f,
+      ),
     );
   };
 
@@ -96,8 +96,8 @@ export const FeatureCard = ({
       state.map((f) =>
         f.id === feature.id
           ? { ...f, images: f.images.filter((_, i) => i !== index) }
-          : f
-      )
+          : f,
+      ),
     );
   };
 
@@ -105,28 +105,28 @@ export const FeatureCard = ({
     window.parent.postMessage(
       {
         pluginMessage: {
-          type: 'GET_NOTE_CONTENT',
-          nodeId: nodeId,	
+          type: "GET_NOTE_CONTENT",
+          nodeId: nodeId,
         },
       },
-      '*'
+      "*",
     );
   };
 
-	// Automatically refresh notes when the feature is expanded.
-	useEffect(() => {
-		if (!isCollapsed) {
-			feature.notes.forEach((note) => {
-				handleRefreshNote(note.nodeId)
-			})
-		}
-	}, [feature.notes, isCollapsed])
+  // Automatically refresh notes when the feature is expanded.
+  useEffect(() => {
+    if (!isCollapsed) {
+      feature.notes.forEach((note) => {
+        handleRefreshNote(note.nodeId);
+      });
+    }
+  }, [feature.notes, isCollapsed]);
 
   return (
     <article className="feature shadow-sm rounded-md p-2">
       <AnimatePresence>
         <div
-          key={feature.id + '-header'}
+          key={feature.id + "-header"}
           className="flex flex-row gap-4 items-center justify-between h-12"
         >
           {isCollapsed ? (
@@ -148,13 +148,13 @@ export const FeatureCard = ({
           )}
           <div className="flex flex-row gap-4">
             <Button onClick={handleDelete} type="minus" color="warn">
-              {confirmDelete ? 'Confirm Delete' : 'Delete'}
+              {confirmDelete ? "Confirm Delete" : "Delete"}
             </Button>
             <Button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              type={isCollapsed ? 'plus' : 'minus'}
+              type={isCollapsed ? "plus" : "minus"}
             >
-              {isCollapsed ? 'Expand' : 'Collapse'}
+              {isCollapsed ? "Expand" : "Collapse"}
             </Button>
           </div>
         </div>
@@ -197,9 +197,7 @@ export const FeatureCard = ({
                       <Button onClick={() => handleImageFocus(note.nodeId)}>
                         Go to Frame
                       </Button>
-                      <Button
-                        onClick={() => handleRefreshNote(note.nodeId)}
-                      >
+                      <Button onClick={() => handleRefreshNote(note.nodeId)}>
                         Refresh Content
                       </Button>
                       <Button
@@ -217,9 +215,9 @@ export const FeatureCard = ({
                   </div>
                 ))}
               </div>
-							<Button onClick={() => handleTagNode('document')} type="plus">
-								Tag Document Note
-							</Button>
+              <Button onClick={() => handleTagNode("document")} type="plus">
+                Tag Document Note
+              </Button>
             </div>
 
             {/* Images */}
@@ -234,7 +232,7 @@ export const FeatureCard = ({
                       <Button
                         onClick={() => handleImageDelete(index)}
                         type="minus"
-												disabled={nodeCount === 0}
+                        disabled={nodeCount === 0}
                       >
                         Delete
                       </Button>
@@ -247,7 +245,7 @@ export const FeatureCard = ({
                 ))}
               </div>
               <Button
-                onClick={() => handleTagNode('image')}
+                onClick={() => handleTagNode("image")}
                 type="plus"
                 disabled={nodeCount === 0}
               >

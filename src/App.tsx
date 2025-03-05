@@ -1,31 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import Button from './components/Button';
+import React, { useState, useEffect } from "react";
+import Button from "./components/Button";
 
-import { FeatureCard } from './components/Feature';
+import { FeatureCard } from "./components/Feature";
 
 const App: React.FC = () => {
   const [appState, setAppState] = useState<App>({
-    fileKey: '',
+    fileKey: "",
   });
   const [features, setFeatures] = useState<Feature[]>([]);
   const [nodeCount, setNodeCount] = useState<number>(0);
-  const [csvContent, setCsvContent] = useState<string>('');
+  const [csvContent, setCsvContent] = useState<string>("");
 
   const saveFeatures = () => {
     window.parent.postMessage(
       {
-        pluginMessage: { type: 'SAVE_FEATURES', features },
+        pluginMessage: { type: "SAVE_FEATURES", features },
       },
-      '*'
+      "*",
     );
   };
 
   const loadFeatures = () => {
     window.parent.postMessage(
       {
-        pluginMessage: { type: 'LOAD_FEATURES' },
+        pluginMessage: { type: "LOAD_FEATURES" },
       },
-      '*'
+      "*",
     );
   };
 
@@ -39,10 +39,10 @@ const App: React.FC = () => {
               const messageHandler = (event: MessageEvent) => {
                 const message = event.data.pluginMessage;
                 if (
-                  message?.type === 'POST_NOTE_CONTENT' &&
+                  message?.type === "POST_NOTE_CONTENT" &&
                   message.nodeId === note.nodeId
                 ) {
-                  window.removeEventListener('message', messageHandler);
+                  window.removeEventListener("message", messageHandler);
                   resolve({
                     ...note,
                     content: message.content,
@@ -50,56 +50,56 @@ const App: React.FC = () => {
                 }
               };
 
-              window.addEventListener('message', messageHandler);
+              window.addEventListener("message", messageHandler);
 
               window.parent.postMessage(
                 {
                   pluginMessage: {
-                    type: 'GET_NOTE_CONTENT',
+                    type: "GET_NOTE_CONTENT",
                     nodeId: note.nodeId,
                   },
                 },
-                '*'
+                "*",
               );
             });
-          })
+          }),
         );
 
         return {
           ...feature,
           notes: updatedNotes,
         };
-      })
+      }),
     );
 
     // Then generate CSV with updated content
     const headers = [
-      'ID',
-      'Title',
-      'Description',
-      'Figma Frame Reference',
-      'Condensed',
-      'High Estimate',
-      'Low Estimate',
-      'Notes',
-      'Notes Content',
+      "ID",
+      "Title",
+      "Description",
+      "Figma Frame Reference",
+      "Condensed",
+      "High Estimate",
+      "Low Estimate",
+      "Notes",
+      "Notes Content",
     ];
 
     const rows = updatedFeatures.map((feature) => [
       feature.id,
       feature.title,
-      feature.images.map((img) => img.embedUrl).join('\r'),
-      `${feature.title}\r${feature.images.map((img) => img.embedUrl).join('\r')}`,
+      feature.images.map((img) => img.embedUrl).join("\r"),
+      `${feature.title}\r${feature.images.map((img) => img.embedUrl).join("\r")}`,
       feature.highEstimate,
       feature.lowEstimate,
-      feature.notes.map((note) => note.embedUrl).join('\r'),
-      feature.notes.map((note) => note.content).join('\r'),
+      feature.notes.map((note) => note.embedUrl).join("\r"),
+      feature.notes.map((note) => note.content).join("\r"),
     ]);
 
     const csvContent = [
-      headers.join(','),
-      ...rows.map((row) => row.join(',')),
-    ].join('\n');
+      headers.join(","),
+      ...rows.map((row) => row.join(",")),
+    ].join("\n");
 
     setCsvContent(csvContent);
   };
@@ -107,29 +107,41 @@ const App: React.FC = () => {
   const downloadCSV = async () => {
     await generateCSV();
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
 
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'features.csv');
-    link.style.visibility = 'hidden';
+    link.setAttribute("href", url);
+    link.setAttribute("download", "features.csv");
+    link.style.visibility = "hidden";
 
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
+  const generateBlocksPage = () => {
+    window.parent.postMessage(
+      {
+        pluginMessage: {
+          type: "GENERATE_BLOCKS_PAGE",
+          features: features,
+        },
+      },
+      "*",
+    );
+  };
+
   /**
    * Get global app state.
    */
   useEffect(() => {
-    if (appState.fileKey === '') {
+    if (appState.fileKey === "") {
       window.parent.postMessage(
         {
-          pluginMessage: { type: 'GET_APP_STATE' },
+          pluginMessage: { type: "GET_APP_STATE" },
         },
-        '*'
+        "*",
       );
     }
   }, [appState.fileKey]);
@@ -141,14 +153,14 @@ const App: React.FC = () => {
         return;
       }
       switch (message.type) {
-        case 'POST_APP_STATE':
+        case "POST_APP_STATE":
           setAppState(message.appState);
           break;
-        case 'POST_NODE_COUNT':
+        case "POST_NODE_COUNT":
           setNodeCount(message.count);
           break;
-        case 'POST_NODE_TAG':
-          if (message.target === 'image') {
+        case "POST_NODE_TAG":
+          if (message.target === "image") {
             setFeatures((state) =>
               state.map((f) =>
                 f.id === message.featureId
@@ -163,10 +175,10 @@ const App: React.FC = () => {
                         },
                       ],
                     }
-                  : f
-              )
+                  : f,
+              ),
             );
-          } else if (message.target === 'document') {
+          } else if (message.target === "document") {
             setFeatures((state) =>
               state.map((f) =>
                 f.id === message.featureId
@@ -181,31 +193,31 @@ const App: React.FC = () => {
                         },
                       ],
                     }
-                  : f
-              )
+                  : f,
+              ),
             );
           }
           break;
-        case 'POST_TEXT':
+        case "POST_TEXT":
           setFeatures((state) =>
             state.map((f) =>
-              f.id === message.featureId ? { ...f, content: message.text } : f
-            )
+              f.id === message.featureId ? { ...f, content: message.text } : f,
+            ),
           );
           break;
-        case 'LOAD_FEATURES':
+        case "LOAD_FEATURES":
           setFeatures(message.features);
           break;
-        case 'POST_NOTE_CONTENT':
+        case "POST_NOTE_CONTENT":
           setFeatures((state) =>
             state.map((f) => ({
               ...f,
               notes: f.notes.map((note) =>
                 note.nodeId === message.nodeId
                   ? { ...note, content: message.content }
-                  : note
+                  : note,
               ),
-            }))
+            })),
           );
           break;
         default:
@@ -213,9 +225,9 @@ const App: React.FC = () => {
       }
     };
 
-    window.addEventListener('message', handleMessage);
+    window.addEventListener("message", handleMessage);
     return () => {
-      window.removeEventListener('message', handleMessage);
+      window.removeEventListener("message", handleMessage);
     };
   }, [appState]);
 
@@ -236,6 +248,16 @@ const App: React.FC = () => {
           Download CSV
         </Button>
       </div>
+      <div className="flex flex-row gap-2">
+        <Button
+          onClick={() => {
+            generateBlocksPage();
+          }}
+          disabled={features.length === 0}
+        >
+          Generate Blocks/Features Page
+        </Button>
+      </div>
       {/* Features */}
       <section className="flex flex-col gap-4 w-full">
         <div className="flex items-center justify-between gap-2">
@@ -246,7 +268,7 @@ const App: React.FC = () => {
                 ...state,
                 {
                   id: state.length,
-                  title: '',
+                  title: "",
                   images: [],
                   notes: [],
                   highEstimate: 0,
