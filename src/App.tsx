@@ -38,23 +38,26 @@ const App: React.FC = () => {
             return new Promise<typeof note>((resolve) => {
               const messageHandler = (event: MessageEvent) => {
                 const message = event.data.pluginMessage;
-                if (message?.type === 'POST_NOTE_CONTENT' && message.nodeId === note.nodeId) {
+                if (
+                  message?.type === 'POST_NOTE_CONTENT' &&
+                  message.nodeId === note.nodeId
+                ) {
                   window.removeEventListener('message', messageHandler);
                   resolve({
                     ...note,
-                    content: message.content
+                    content: message.content,
                   });
                 }
               };
-              
+
               window.addEventListener('message', messageHandler);
-              
+
               window.parent.postMessage(
                 {
                   pluginMessage: {
                     type: 'GET_NOTE_CONTENT',
-                    nodeId: note.nodeId
-                  }
+                    nodeId: note.nodeId,
+                  },
                 },
                 '*'
               );
@@ -64,7 +67,7 @@ const App: React.FC = () => {
 
         return {
           ...feature,
-          notes: updatedNotes
+          notes: updatedNotes,
         };
       })
     );
@@ -78,8 +81,8 @@ const App: React.FC = () => {
       'Condensed',
       'High Estimate',
       'Low Estimate',
-			'Notes',
-			'Notes Content',
+      'Notes',
+      'Notes Content',
     ];
 
     const rows = updatedFeatures.map((feature) => [
@@ -89,7 +92,7 @@ const App: React.FC = () => {
       `${feature.title}\r${feature.images.map((img) => img.embedUrl).join('\r')}`,
       feature.highEstimate,
       feature.lowEstimate,
-			feature.notes.map((note) => note.embedUrl).join('\r'),
+      feature.notes.map((note) => note.embedUrl).join('\r'),
       feature.notes.map((note) => note.content).join('\r'),
     ]);
 
@@ -103,7 +106,7 @@ const App: React.FC = () => {
 
   const downloadCSV = async () => {
     await generateCSV();
-    
+
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
@@ -117,19 +120,19 @@ const App: React.FC = () => {
     document.body.removeChild(link);
   };
 
-	/**
-	 * Get global app state.
-	 */
-	useEffect(() => {
-		if (appState.fileKey === '') {
-			window.parent.postMessage(
-				{
-					pluginMessage: { type: 'GET_APP_STATE' },
-				},
-				'*'
-			);
-		}
-	}, [appState.fileKey]);
+  /**
+   * Get global app state.
+   */
+  useEffect(() => {
+    if (appState.fileKey === '') {
+      window.parent.postMessage(
+        {
+          pluginMessage: { type: 'GET_APP_STATE' },
+        },
+        '*'
+      );
+    }
+  }, [appState.fileKey]);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
