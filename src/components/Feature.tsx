@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from './Button';
 import ReactMarkdown from 'react-markdown';
 import { Collapse } from './Collapse';
@@ -101,6 +101,27 @@ export const FeatureCard = ({
     );
   };
 
+  const handleRefreshNote = (nodeId: string) => {
+    window.parent.postMessage(
+      {
+        pluginMessage: {
+          type: 'GET_NOTE_CONTENT',
+          nodeId: nodeId,	
+        },
+      },
+      '*'
+    );
+  };
+
+	// Automatically refresh notes when the feature is expanded.
+	useEffect(() => {
+		if (!isCollapsed) {
+			feature.notes.forEach((note) => {
+				handleRefreshNote(note.nodeId)
+			})
+		}
+	}, [feature.notes, isCollapsed])
+
   return (
     <article className="feature shadow-sm rounded-md p-2">
       <AnimatePresence>
@@ -169,18 +190,17 @@ export const FeatureCard = ({
             {/* Text */}
 
             <div className="flex flex-col gap-2 bg-gray-100 rounded-md p-2">
-              <div className="flex flex-row gap-2 w-full">
-                <Button onClick={() => handleTagNode('document')} type="plus">
-                  Tag Document Note
-                </Button>
-              </div>
-
               <div className="flex flex-col gap-2 w-full">
                 {feature.notes.map((note, index) => (
                   <div key={`note-${index}`} className="flex flex-col gap-2">
                     <div className="flex flex-row gap-2 w-full justify-between">
                       <Button onClick={() => handleImageFocus(note.nodeId)}>
                         Go to Frame
+                      </Button>
+                      <Button
+                        onClick={() => handleRefreshNote(note.nodeId)}
+                      >
+                        Refresh Content
                       </Button>
                       <Button
                         onClick={() => handleUntagTextNode(note.nodeId)}
@@ -197,6 +217,9 @@ export const FeatureCard = ({
                   </div>
                 ))}
               </div>
+							<Button onClick={() => handleTagNode('document')} type="plus">
+								Tag Document Note
+							</Button>
             </div>
 
             {/* Images */}
@@ -211,6 +234,7 @@ export const FeatureCard = ({
                       <Button
                         onClick={() => handleImageDelete(index)}
                         type="minus"
+												disabled={nodeCount === 0}
                       >
                         Delete
                       </Button>

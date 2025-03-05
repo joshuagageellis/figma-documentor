@@ -196,6 +196,18 @@ const App: React.FC = () => {
         case 'LOAD_FEATURES':
           setFeatures(message.features);
           break;
+        case 'POST_NOTE_CONTENT':
+          setFeatures((state) =>
+            state.map((f) => ({
+              ...f,
+              notes: f.notes.map((note) =>
+                note.nodeId === message.nodeId
+                  ? { ...note, content: message.content }
+                  : note
+              ),
+            }))
+          );
+          break;
         default:
           break;
       }
